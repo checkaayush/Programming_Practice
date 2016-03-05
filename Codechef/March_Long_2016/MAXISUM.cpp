@@ -5,64 +5,65 @@
 using namespace std;
 
 typedef struct Unit {
-	int a; // Element of First Array A
-	int b; // Element of Second Array B
+	long long a; // Element of First Array A
+	long long b; // Element of Second Array B
 	long long product; // Product (a * b)
 } Unit;
 
-void printUnitArray(Unit* units, int n) {
-	for(int i = 0; i < n; i++) {
-		printf("%d %d %lld\n", units[i].a, units[i].b, units[i].product);
-	}
-}
+// void printUnitArray(Unit* units, long long n) {
+// 	for(long long i = 0; i < n; i++) {
+// 		printf("%d %d %lld\n", units[i].a, units[i].b, units[i].product);
+// 	}
+// }
 
+// Compare function to sort descendingly
 bool cmpFunc(Unit u1, Unit u2) {
-	return u1.product < u2.product;
+	return u1.product > u2.product;
 }
 
 long long getNewSum(Unit u, long long sum, long long k) {
 	
-	long long oldProduct = u.product, newProduct = oldProduct, newSum;
+	long long oldProduct = u.product, newProduct = oldProduct, newSum, temp = k;
 
 	if (oldProduct > 0) {
-		if (u.a > 0) {
-			newProduct = (u.a + k) * u.b;
-		} else {
-			newProduct = (u.a - k) * u.b;
-		}
+		
+		if (u.a < 0)
+			k = -k;
+
 	} else if (oldProduct < 0) {
-		if (u.a > 0) {
-			newProduct = (u.a - k) * u.b;
-		} else {
-			newProduct = (u.a + k) * u.b;
-		}
+		
+		if (u.a > 0)
+			k = -k;
+
 	} else {
 		if (u.a == 0) {
-			if (u.b > 0){
-				newProduct = (u.a + k) * u.b;
-			} else {
-				newProduct = (u.a - k) * u.b;
-			}
+			
+			if (u.b < 0)
+				k = -k;
+
 		}
 	}
 
+	newProduct = (u.a + k) * u.b;
 	newSum = sum - oldProduct + newProduct;
-	return newSum;
+	if (newSum > sum)
+		return newSum;
+	else
+		return sum;
 }
 
 long long solve(Unit* units, long long n, long long sum, long long k) {
 	
 	// Note: Allowed operations only on 'a'
-	long long leftSum, rightSum;
+	long long newSum = 0, maxSum = sum;
 
-	// Left interaction
-	leftSum = getNewSum(units[0], sum, k);
+	for (long long i = 0; i < n; i++) {
+		newSum = getNewSum(units[i], sum, k);
+		if (newSum > maxSum)
+			maxSum = newSum;
+	}
 
-	// Right interaction
-	rightSum = getNewSum(units[n-1], sum, k);
-
-	return (leftSum > rightSum) ? (leftSum) : (rightSum);
-
+	return maxSum;
 }
 
 int main() {
@@ -77,17 +78,17 @@ int main() {
 	
 		Unit* units = (Unit*) malloc(sizeof(Unit) * n);
 
-		for (int i = 0; i < n; i++) {
+		for (long long i = 0; i < n; i++) {
 
 			// Input values of first array
-			scanf("%d", &units[i].a);	
+			scanf("%lld", &units[i].a);	
 		}
 
 		sum = 0;
-		for (int i = 0; i < n; i++) {
+		for (long long i = 0; i < n; i++) {
 			
 			// Input values of second array
-			scanf("%d", &units[i].b);
+			scanf("%lld", &units[i].b);
 			
 			// Calculate product
 			units[i].product = units[i].a * units[i].b;
@@ -96,7 +97,7 @@ int main() {
 			sum += units[i].product;
 		}
 
-		// Sort array of structures in ascending order 
+		// Sort array of structures in descending order 
 		sort(&units[0], &units[n], cmpFunc);
 
 		// printUnitArray(units, n);
