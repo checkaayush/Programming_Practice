@@ -1,76 +1,97 @@
-#include <iostream>
-#include <string>
- 
+#include <cstdio>
+#include <cstring>
+
 using namespace std;
- 
-bool isSpecial(string str) {
-	long long length = str.length(), newLength, index = length / 2;
-	string leftSubstring, rightSubstring, newStr;
- 
-	int alpha[26] = {0};
- 
-	if (length % 2 == 0) {
+
+char oddChar;
+
+bool isSpecialityPossible(char* str) {
+	
+	long long alpha[26] = {0};
+	long long oddCount = 0;
+	long long length = strlen(str);
+
+	for (long long i = 0; i < length; ++i) {
+		alpha[str[i]-97]++;
+	}
+
+	for (int i = 0; i < 26; ++i) {
 		
-		leftSubstring = str.substr(0, index);
-		rightSubstring = str.substr(index);
-		return (leftSubstring.compare(rightSubstring) == 0);	
- 
+		if (alpha[i] == length) {
+			return true;
+		}
+
+		if (alpha[i] & 1) {
+			oddCount++;
+			oddChar = (char)(i + 97);
+		}
+		
+		if (oddCount > 1) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool isDouble(char* str) {
+
+	long long length = strlen(str);
+	long long index = length / 2;
+
+	for (long long i = 0, j = index; i < index && j < length; ++i, ++j) {
+		if (str[i] != str[j]) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool isSpecial(char* str) {
+
+	if (!isSpecialityPossible(str))
+		return false;
+	
+	long long length = strlen(str);
+	long long index = length / 2;
+
+	if (length & 1) {
+
+		char newStr[1000001];
+		for (long long i = 0, k = 0; i < length; ++i) {
+			if (str[i] != oddChar) {
+				newStr[k] = str[i];
+				k++;
+			}
+			if (i == length - 1) {
+				newStr[k] = '\0';	
+			}
+		}
+
+		return isDouble(newStr);
+
 	} else {
-		
-		for (int i = 0; i < length; i++) {
-			alpha[str.at(i) - 97]++;
-		}
- 
-		int oddCount = 0;
-		char oddChar;
- 
-		for (int i = 0; i < 26; i++) {
-			if (alpha[i] % 2 != 0) {
-				oddCount++;
-				oddChar = i + 97;
-			}
-			if (oddCount > 1)
-				return false;
-		}
- 
-		for (int i = 0; i < length; i++) {
-			
-			if (str.at(i) != oddChar)
-				continue;
- 
-			newStr = str;
- 
-			newStr.erase(i, 1);
-			newLength = newStr.length();
-			index = newLength / 2;
- 
-			leftSubstring = newStr.substr(0, index);
-			rightSubstring = newStr.substr(index);	
- 
-			if (leftSubstring.compare(rightSubstring) == 0) {
-				return true;
-			}
-		}
-		
+		return isDouble(str);	
 	}
 	
-	return false;
-	
 }
- 
+
 int main() {
  
-	long long D;
-	cin >> D;
+ 	long long D;
+	scanf("%lld", &D);
  
-	string str;
+	char str[1000001];
+
 	while(D--) {
-		cin >> str;
+
+		scanf("%s", str);
  
 		if (isSpecial(str)) {
-			cout << "YES" << endl;
+			printf("YES\n");
 		} else {
-			cout << "NO" << endl;
+			printf("NO\n");
 		}
 	}
  

@@ -97,7 +97,7 @@ int main() {
 			sum += units[i].product;
 		}
 
-		// Sort array of structures in descending order 
+		// Sort array of structures in descending order of product value
 		sort(&units[0], &units[n], cmpFunc);
 
 		// printUnitArray(units, n);
